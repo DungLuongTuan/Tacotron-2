@@ -19,6 +19,7 @@ from . import util
 
 log = infolog.log
 
+import pdb
 
 def add_train_stats(model):
 	with tf.variable_scope('stats') as scope:
@@ -169,12 +170,10 @@ def train(log_dir, args, hparams, input_path):
 	coord = tf.train.Coordinator()
 	with tf.variable_scope('datafeeder') as scope:
 		feeder = Feeder(coord, input_path, args.base_dir, hparams)
-
 	#Set up model
 	global_step = tf.Variable(0, name='global_step', trainable=False)
 	model, stats = model_train_mode(args, feeder, hparams, global_step)
 	eval_model = model_test_mode(args, feeder, hparams, global_step)
-
 	#book keeping
 	step = 0
 	time_window = ValueWindow(100)
@@ -222,7 +221,7 @@ def train(log_dir, args, hparams, input_path):
 
 			#initializing feeder
 			feeder.start_threads(sess)
-
+			# pdb.set_trace()
 			if run_init:
 				#Run one forward pass for model parameters initialization (make prediction on init_batch)
 				_ = sess.run(init_model.y_hat)

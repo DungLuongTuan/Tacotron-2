@@ -10,7 +10,7 @@ from .mixture import sample_from_discretized_mix_logistic
 from .modules import (Conv1D1x1, ConvTranspose2D, ConvTranspose1D, DiscretizedMixtureLogisticLoss, Embedding, GaussianMaximumLikelihoodEstimation,
 						LeakyReluActivation, MaskedCrossEntropyLoss, ReluActivation, ResidualConv1DGLU, WeightNorm)
 
-
+import pdb
 def _expand_global_features(batch_size, time_length, global_features, data_format='BCT'):
 	"""Expand global conditioning features to all time steps
 
@@ -187,7 +187,6 @@ class WaveNet():
 
 		self.receptive_field = receptive_field_size(hparams.layers,
 			hparams.stacks, hparams.kernel_size)
-
 
 	def set_mode(self, is_training):
 		for conv in self.all_convs:
@@ -562,7 +561,7 @@ class WaveNet():
 		x = self.first_conv(x)
 		skips = None
 		for conv in self.residual_layers:
-			x, h = conv(x, c, g_bct)
+			x, h = conv(inputs = x, c = c, g = g_bct)
 			if skips is None:
 				skips = h
 			else:
@@ -570,7 +569,7 @@ class WaveNet():
 		x = skips
 
 		for conv in self.last_conv_layers:
-			x = conv(x)
+			x = conv(inputs = x)
 
 		return tf.nn.softmax(x, axis=1) if softmax else x
 

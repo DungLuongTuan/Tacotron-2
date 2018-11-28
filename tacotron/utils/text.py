@@ -10,6 +10,9 @@ _id_to_symbol = {i: s for i, s in enumerate(symbols)}
 # Regular expression matching text enclosed in curly braces:
 _curly_re = re.compile(r'(.*?)\{(.+?)\}(.*)')
 
+# vietnamese consonants
+vi_consonants = ['b', 'd', 'h', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'x', 'đ', 'f', 'q', 'c', 'k', 'z', 'w', 'tr', 'th', 'ch', 'ph', 'nh', 'kh', 'gi', 'qu', 'sh', 'gh', 'ng', 'ngh']
+
 
 def text_to_sequence(text, cleaner_names):
   '''Converts a string of text to a sequence of IDs corresponding to the symbols in the text.
@@ -63,7 +66,22 @@ def _clean_text(text, cleaner_names):
   return text
 
 
-def _symbols_to_sequence(symbols):
+def _symbols_to_sequence(text):
+  # for letter to sound
+  # return [_symbol_to_id[s] for s in text if _should_keep_symbol(s)]
+
+  # for phonemes to sound
+  text = text.lower()
+  symbols = ['@']
+  for c in text:
+    if symbols[-1] + c in vi_consonants:
+      symbols[-1] = symbols[-1] + c
+      continue
+    if (symbols[-1].lower() == 'g') and (c.lower() in ['i', 'ì', 'í', 'ỉ', 'ĩ', 'ị']):
+      symbols[-1] = symbols[-1] + 'i'
+    symbols.append(c)
+  symbols = symbols[1:]
+
   return [_symbol_to_id[s] for s in symbols if _should_keep_symbol(s)]
 
 

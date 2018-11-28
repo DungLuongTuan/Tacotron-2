@@ -107,3 +107,13 @@ venv.bak/
 logs-*/
 training_data/
 
+# my ignore
+logs-Tacotron-2
+logs-Wavenet
+norm_vov
+training_data
+demo_server.py
+hparam1.py
+sentences.txt
+tacotron_output
+test

@@ -89,3 +89,8 @@ def english_cleaners(text):
   text = expand_abbreviations(text)
   text = collapse_whitespace(text)
   return text
+
+def vietnamese_cleaners(text):
+  ''' clean nothing'''
+  text = collapse_whitespace(text)
+  return text

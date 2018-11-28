@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 
 # Default hyperparameters
-hparams = tf.contrib.training.HParams(
+hparams1 = tf.contrib.training.HParams(
 	# Comma-separated list of cleaners to run on text prior to training and eval. For non-English
 	# text, you may want to use "basic_cleaners" or "transliteration_cleaners".
 	cleaners='vietnamese_cleaners',
@@ -241,7 +241,7 @@ hparams = tf.contrib.training.HParams(
 	tacotron_reg_weight = 1e-7, #1e-7 regularization weight (for L2 regularization)
 	tacotron_scale_regularization = False, #Whether to rescale regularization weight to adapt for outputs range (used when reg_weight is high and biasing the model)
 	tacotron_zoneout_rate = 0.1, #0.1 zoneout rate for all LSTM cells in the network
-	tacotron_dropout_rate = 0.3, #0.5 dropout rate for all convolutional layers + prenet
+	tacotron_dropout_rate = 0.1, #0.5 dropout rate for all convolutional layers + prenet
 	tacotron_clip_gradients = True, #whether to clip gradients
 
 	#Evaluation parameters

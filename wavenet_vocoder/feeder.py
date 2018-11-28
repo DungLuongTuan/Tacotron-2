@@ -10,7 +10,7 @@ from keras.utils import np_utils
 from sklearn.model_selection import train_test_split
 
 from .util import is_mulaw_quantize, is_scalar_input
-
+import pdb
 
 
 _batches_per_group = 32
@@ -156,9 +156,9 @@ class Feeder:
 		thread.daemon = True #Thread will close when parent quits
 		thread.start()
 
-		thread = threading.Thread(name='background', target=self._enqueue_next_test_group)
-		thread.daemon = True #Thread will close when parent quits
-		thread.start()
+		# thread = threading.Thread(name='background', target=self._enqueue_next_test_group)
+		# thread.daemon = True #Thread will close when parent quits
+		# thread.start()
 
 	def _get_test_groups(self):
 		meta = self._test_meta[self._test_offset]
@@ -203,11 +203,9 @@ class Feeder:
 	def _enqueue_next_train_group(self):
 		while not self._coord.should_stop():
 			start = time.time()
-
 			# Read a group of examples
 			n = self._hparams.wavenet_batch_size
 			examples = [self._get_next_example() for i in range(n * _batches_per_group)]
-
 			# Bucket examples base on similiar output length for efficiency
 			examples.sort(key=lambda x: x[-1])
 			batches = [examples[i: i+n] for i in range(0, len(examples), n)]
@@ -241,7 +239,6 @@ class Feeder:
 		else:
 			mel_file = meta[1]
 		audio_file = meta[0]
-
 		input_data = np.load(os.path.join(self._base_dir, audio_file))
 
 		if self.local_condition:
@@ -275,7 +272,6 @@ class Feeder:
 		targets = self._prepare_targets([x[0] for x in batch], max_input_length)
 		local_condition_features = self._prepare_local_conditions(self.local_condition, [x[1] for x in batch])
 		global_condition_features = self._prepare_global_conditions(self.global_condition, [x[2] for x in batch])
-
 		new_batch = (inputs, targets, input_lengths)
 		if local_condition_features is not None:
 			new_batch += (local_condition_features, )
