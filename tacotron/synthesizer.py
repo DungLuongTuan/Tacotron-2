@@ -216,6 +216,31 @@ class Synthesizer:
 
 		return saved_mels_paths, speaker_ids
 
+	
+	def linear_synthesize(self, texts):
+		hparams = self._hparams
+		cleaner_names = [x.strip() for x in hparams.cleaners.split(',')]
+
+		seqs = [np.asarray(text_to_sequence(text, cleaner_names)) for text in texts]
+		input_lengths = [len(seq) for seq in seqs]
+
+		#Pad inputs according to each GPU max length
+		split_infos = []
+		device_input, max_seq_len = self._prepare_inputs(seqs)
+		input_seqs = device_input
+		split_infos.append([max_seq_len, 0, 0, 0])
+
+		feed_dict = {
+			self.inputs: input_seqs,
+			self.input_lengths: np.asarray(input_lengths, dtype=np.int32),
+		}
+
+		feed_dict[self.split_infos] = np.asarray(split_infos, dtype=np.int32)
+
+		linears, alignments, stop_tokens = self.session.run([self.linear_outputs, self.alignments, self.stop_token_prediction], feed_dict=feed_dict)
+
+		return linears[0]
+
 	def _round_up(self, x, multiple):
 		remainder = x % multiple
 		return x if remainder == 0 else x + multiple - remainder
